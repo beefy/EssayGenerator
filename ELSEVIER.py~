@@ -1,21 +1,25 @@
 from urllib2 import Request, urlopen, URLError
 from xml.dom import minidom
+import xml.etree.ElementTree as ET
+from lxml import etree
 
 #querry for pii article number
 #check for openaccessArticle
-request = Request('http://api.elsevier.com/content/search/index:SCIDIR?APIKey=fc14ce8335d2899c36c25615b5feb68a&query=sea&API')
+request = Request('http://api.elsevier.com/content/search/index:SCIDIR?APIKey=fc14ce8335d2899c36c25615b5feb68a&query=sea')
 
 try:
    response = urlopen(request)
    article = response.read()
-   #print article
-   xmldoc = minidom.parse(article)
-   itemlist = xmldoc.getElementsByTagName('pii')
-   #print(len(itemlist))
-except URLError, e:
-   #print 'Error, could not read file:', e
+   pip_ids = []
 
-for i in range(0,article.totalResults):
+   pip_ids.append(article[int(article.find('<pii>')), int(article.find('</pii>'))])
+   print pip_ids
+
+   
+except URLError, e:
+   print 'Error, could not read file:', e
+
+#for i in range(0,article.totalResults):
    #print i
 
 #get full article text
