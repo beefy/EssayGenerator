@@ -18,28 +18,28 @@ except URLError, e:
     exit(1)
 
 #get pip_ids
-pii_ids = []
+doi_ids = []
 
-while article.find('pii:') != -1:
-    cur_str = article[int(article.find('pii:')):int(article.find('pii:')+24)]
-    cur_pii = cur_str[4:]
+while article.find('"prism:doi":"') != -1:
+    cur_str = article[int(article.find('"prism:doi":"')):int(article.find('"prism:doi":"')+47)]
+    cur_doi = cur_str[13:]
     #isOpenArticleStr = article[int(article.find('"openaccessArticle":')+20):int(article.find('"openaccessArticle":')+24)]
     #if isOpenArticleStr == 'true':
-    pii_ids.append(cur_pii)
+    doi_ids.append(cur_doi)
     article = article.replace(cur_str, ' ', 1)
     #article = article.replace(isOpenArticleStr, '  ')
-    if len(pii_ids) >= 100:
-        print pii_ids
+    if len(doi_ids) >= 100:
+        print doi_ids
         print 'Filled up!'
         exit(0)
-print pii_ids
+print doi_ids
 
 #for i in range(0,article.totalResults):
    #print i
 
 #get full article text
 #process data within <p> tags
-request = Request('http://api.elsevier.com/content/article/PII:S0967-0637(15)00069-2?APIKey=fc14ce8335d2899c36c25615b5feb68a&httpAccept=text/html')
+request = Request('http://api.elsevier.com/content/article/DIO:' + doi_ids[0] + '?APIKey=fc14ce8335d2899c36c25615b5feb68a&httpAccept=text/html')
 
 try:
    response = urlopen(request)
