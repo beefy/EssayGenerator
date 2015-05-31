@@ -17,7 +17,7 @@ except URLError, e:
     print 'Error, could not read file:', e
     exit(1)
 
-#get pip_ids
+#get doi_ids
 doi_ids = []
 
 while article.find('"prism:doi":"') != -1:
@@ -34,19 +34,26 @@ while article.find('"prism:doi":"') != -1:
         exit(0)
 print doi_ids
 
-#for i in range(0,article.totalResults):
-   #print i
 
 #get full article text
-#process data within <p> tags
-request = Request('http://api.elsevier.com/content/article/DIO:' + doi_ids[0] + '?APIKey=fc14ce8335d2899c36c25615b5feb68a&httpAccept=text/html')
+for i in range(0,len(doi_ids)):
+    request = Request('http://api.elsevier.com/content/article/DIO:' + doi_ids[i] + '?APIKey=fc14ce8335d2899c36c25615b5feb68a&httpAccept=text/html')
 
-try:
-   response = urlopen(request)
-   article = response.read()
-   #print article
-except URLError, e:
-   print 'Error, could not read file:', e
+    try:
+        response = urlopen(request)
+        article = response.read()
+    except URLError, e:
+        print 'Error, could not read file:', e
+
+    #extract text in article (between <p> tags)
+    while article.find("<p>") != -1:
+        cur_text_bracket = article[int(article.find('<p>')):int(article.find('</p>') + 3)]
+        cur_text = cur_text_bracket[3:len(cur_text_bracket)-4]
+
+        article = article.replace(cur_text_bracket, ' ', 1)
+
+        #nupic stuff
+        print cur_text
 
 print 'DONE'
 
